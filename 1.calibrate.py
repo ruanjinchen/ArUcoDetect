@@ -8,11 +8,11 @@ import yaml
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)  # 阈值
 # 棋盘格模板规格
 w = 8  # 9-1
-h = 8  # 9-1
+h = 7  # 9-1
 # 世界坐标系中的棋盘格点,例如(0,0,0), (1,0,0), (2,0,0) ....,(8,5,0)，去掉Z坐标，记为二维矩阵
 objp = np.zeros((w * h, 3), np.float32)
 objp[:, :2] = np.mgrid[0:w, 0:h].T.reshape(-1, 2)
-objp = objp * 16.2  # 16.2mm,实际大小
+objp = objp * 18 / 1000  # 16.2mm,实际大小
 
 # 储存棋盘格角点的世界坐标和图像坐标对
 objpoints = []  # 在世界坐标系中的三维点
@@ -42,7 +42,7 @@ for frame in images:
         # 将角点在图像上显示
         cv2.drawChessboardCorners(img, (w, h), corners, ret)
         cv2.namedWindow('findCorners', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('findCorners', 640, 480)
+        cv2.resizeWindow('findCorners', 1920, 1080)
         cv2.imshow('findCorners', img)
         cv2.waitKey(200)
 cv2.destroyAllWindows()

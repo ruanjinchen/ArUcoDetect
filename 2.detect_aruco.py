@@ -9,7 +9,9 @@ file_path = "./标定文件.yaml"
 
 with open(file_path, "r") as file:
     parameter = yaml.load(file.read(), Loader=yaml.Loader)
+    # data = np.load("./IntrinsicMatrix.npz")
     mtx = parameter['camera_matrix']
+    # mtx = data["arr_0"]
     dist = parameter['dist_coefficients']
     camera_u = parameter['camera_u']
     camera_v = parameter['camera_v']
@@ -23,7 +25,7 @@ font = cv2.FONT_HERSHEY_SIMPLEX  # font for displaying text (below)
 pipeline = rs.pipeline()
 config = rs.config()
 # 使用默认的配置,设置彩色流
-config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+config.enable_stream(rs.stream.color, 1920, 1080, rs.format.bgr8, 30)
 
 # 启动图像
 pipeline.start(config)
