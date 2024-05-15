@@ -5,8 +5,6 @@ import cv2
 import cv2.aruco as aruco
 import pyrealsense2 as rs
 import yaml
-import numpy as np
-
 
 
 file_path = "./标定文件.yaml"
@@ -58,32 +56,32 @@ while True:
 
     #    if ids != None:
     if ids is not None:
+
         rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)
+        # Estimate pose of each marker and return the values rvet and tvec---different
+        # from camera coeficcients
+        (rvec - tvec).any()  # get rid of that nasty numpy value array error
+
+        #        aruco.drawAxis(frame, mtx, dist, rvec, tvec, 0.1) #Draw Axis
+        #        aruco.drawDetectedMarkers(frame, corners) #Draw A square around the markers
 
         for i in range(rvec.shape[0]):
-            # 对每个检测到的标记处理其旋转向量
-            R, _ = cv2.Rodrigues(rvec[i, 0, :])  # 现在 rvec[i, 0, :] 是一个1x3的旋转向量
-
-            # 从旋转矩阵计算欧拉角 ZYX
-            yaw = np.rad2deg(float(np.arctan2(R[1, 0], R[0, 0])))
-            pitch = np.rad2deg(float(np.arctan2(-R[2, 0], np.sqrt(R[2, 1]**2 + R[2, 2]**2))))
-            roll = np.rad2deg(float(np.arctan2(R[2, 1], R[2, 2])))
-
-            x = f"{roll:.3f}"
-            y = f"{pitch:.3f}"
-            z = f"{yaw:.3f}"
-
-            cv2.drawFrameAxes(frame, mtx, dist, rvec[i, 0, :], tvec[i, 0, :], 0.03)
+            rvec_degree = np.rad2deg(rvec[i, :, :])
+            cv2.drawFrameAxes(frame, mtx, dist, rvec[i, :, :], tvec[i, :, :], 0.03)
             aruco.drawDetectedMarkers(frame, corners)
+        # 显示ID，rvec,tvec, 旋转向量和平移向量
+        cv2.putText(frame, "Id: " + str(ids), (10, 40), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, "rvec: " + str(rvec_degree[ :, :]), (10, 160), font, 1.5, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.putText(frame, "tvec: " + str(tvec[i, :, :]), (10, 260), font, 1.5, (0, 0, 255), 1, cv2.LINE_AA)
+        data = tvec[i, :, :]
+        # print("tvec:", tvec)
+        # print("rvec_degree:", rvec_degree)
 
-            # 显示ID，rvec,tvec, 旋转向量和平移向量
-            cv2.putText(frame, "Id: " + str(ids[i]), (10, 40), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
-            cv2.putText(frame, "rvec: " + x + '  ' + y + '  ' + z + '  ', (10, 160), font, 1.5, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(frame, "tvec: " + str(tvec[i, 0, :]), (10, 260), font, 1.5, (0, 0, 255), 1, cv2.LINE_AA)
-
-            # 发送数据到socket
-            message = ",".join(map(str, [tvec[i, 0, 0], tvec[i, 0, 1], tvec[i, 0, 2], x, y, z]))
-            socket.send_string(message)
+        # Correctly accessing the first element from each nested array and converting each to string
+        # message = ",".join(map(str, [tvec[i, 0, 0], tvec[i, 0, 1], tvec[i, 0, 2], rvec_degree[0, 0], rvec_degree[0, 1], rvec_degree[0, 2]]))
+        #
+        # socket.send_string(message)
+        # time.sleep(1)
 
 
     else:
