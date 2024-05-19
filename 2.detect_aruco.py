@@ -5,8 +5,6 @@ import cv2
 import cv2.aruco as aruco
 import pyrealsense2 as rs
 import yaml
-import numpy as np
-
 
 
 file_path = "./标定文件.yaml"
@@ -20,9 +18,8 @@ with open(file_path, "r") as file:
     mtx = np.array(mtx)
     dist = np.array(dist)
 
-# 打开笔记本摄像头
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-font = cv2.FONT_HERSHEY_SIMPLEX  # font for displaying text (below)
+
+font = cv2.FONT_HERSHEY_SIMPLEX  # 设置显示字体
 
 pipeline = rs.pipeline()
 config = rs.config()
@@ -51,15 +48,11 @@ while True:
     aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_1000)
     parameters = aruco.DetectorParameters()
 
-    # lists of ids and the corners beloning to each id
-    corners, ids, rejectedImgPoints = aruco.detectMarkers(gray,
-                                                          aruco_dict,
-                                                          parameters=parameters)
+    # 列出所有的id和检测出来的边框角点
+    corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
 
-    #    if ids != None:
     if ids is not None:
-        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)
-
+        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)  # 0.05是
         for i in range(rvec.shape[0]):
             # 对每个检测到的标记处理其旋转向量
             R, _ = cv2.Rodrigues(rvec[i, 0, :])  # 现在 rvec[i, 0, :] 是一个1x3的旋转向量

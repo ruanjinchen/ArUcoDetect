@@ -8,7 +8,7 @@ import yaml
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)  # 阈值
 # 棋盘格模板规格
 w = 8  # 9-1
-h = 7  # 9-1
+h = 7  # 9-2
 # 世界坐标系中的棋盘格点,例如(0,0,0), (1,0,0), (2,0,0) ....,(8,5,0)，去掉Z坐标，记为二维矩阵
 objp = np.zeros((w * h, 3), np.float32)
 objp[:, :2] = np.mgrid[0:w, 0:h].T.reshape(-1, 2)
