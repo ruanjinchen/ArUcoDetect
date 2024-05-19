@@ -19,7 +19,7 @@ objp = objp * 18 / 1000  # 16.2mm,实际大小
 obj_points = []  # 在世界坐标系中的三维点
 img_points = []  # 在图像平面的二维点
 # 加载image文件夹下所有的jpg图像
-images = glob.glob('./IMAGE/*.png')  # 拍摄的十几张棋盘图片所在目录
+images = glob.glob('images/*.png')  # 拍摄的十几张棋盘图片所在目录
 u, v = 0.0, 0.0
 i = 0
 gray = None
