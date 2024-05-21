@@ -27,8 +27,8 @@ pipeline_profile = pipeline.start(config)
 
 device = pipeline_profile.get_device()
 sensor = device.query_sensors()[1]
-exposure = 100  # 曝光
-gain = 50  # 增益
+exposure = 150  # 曝光
+gain = 0  # 增益
 sensor.set_option(rs.option.exposure, exposure)
 sensor.set_option(rs.option.gain, gain)
 
@@ -56,7 +56,7 @@ while True:
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
 
     if ids is not None:
-        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)  # 0.05是
+        rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)  # 0.05是实际大小
         for i in range(rvec.shape[0]):
             # 对每个检测到的标记处理其旋转向量
             R, _ = cv2.Rodrigues(rvec[i, 0, :])  # 现在 rvec[i, 0, :] 是一个1x3的旋转向量
